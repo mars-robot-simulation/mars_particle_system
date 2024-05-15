@@ -1,0 +1,58 @@
+Windows:
+  - name: DataBrokerWidget/hidden
+    type: bool
+    value: true
+  - name: DataBroker_ConnectionWidget/hidden
+    type: bool
+    value: true
+  - name: Docks
+    type: string
+    value: ""
+  - name: LibManagerWidget/Window Top
+    type: int
+    value: 40
+  - name: LibManagerWidget/height
+    type: int
+    value: 400
+  - name: LibManagerWidget/hidden
+    type: bool
+    value: true
+  - name: LibManagerWidget/left
+    type: int
+    value: 40
+  - name: LibManagerWidget/width
+    type: int
+    value: 400
+  - name: Main Window/Window Height
+    type: int
+    value: 200
+  - name: Main Window/Window Left
+    type: int
+    value: 1843
+  - name: Main Window/Window Top
+    type: int
+    value: 648
+  - name: Main Window/Window Width
+    type: int
+    value: 400
+  - name: Main Window/docking
+    type: bool
+    value: false
+  - name: Mars Style
+    type: bool
+    value: false
+  - name: cfg/Window Top
+    type: int
+    value: 40
+  - name: cfg/height
+    type: int
+    value: 400
+  - name: cfg/hidden
+    type: bool
+    value: true
+  - name: cfg/left
+    type: int
+    value: 40
+  - name: cfg/width
+    type: int
+    value: 400
