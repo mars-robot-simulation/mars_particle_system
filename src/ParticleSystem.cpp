@@ -24,15 +24,6 @@ namespace mars
             using namespace mars::utils;
             using namespace mars::interfaces;
 
-            ParticleSystem::~ParticleSystem() {
-                for(auto& nodeInfo : nodes)
-                {
-                    auto& mesh = nodeInfo.nodeData.mesh;
-                    constexpr bool free_memory = true;
-                    mesh.setZero(free_memory);
-                }
-            }
-
             // input have to be between 0 and 1
             void writeFloat(float value, unsigned char *buffer)
             {
@@ -77,7 +68,12 @@ namespace mars
 
             ParticleSystem::~ParticleSystem()
             {
-                // todo: free memory
+                for(auto& nodeInfo : nodes)
+                {
+                    auto& mesh = nodeInfo.nodeData.mesh;
+                    constexpr bool free_memory = true;
+                    mesh.setZero(free_memory);
+                }
             }
 
             void ParticleSystem::init(configmaps::ConfigMap &map)
