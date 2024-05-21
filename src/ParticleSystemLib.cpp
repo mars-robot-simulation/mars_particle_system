@@ -98,7 +98,6 @@ namespace mars
             {
                 double camPose[7] = {0, 0, 0, 0, 0, 0, 0};
                 GraphicsWindowInterface* gw = control->graphics->get3DWindow(1);
-                NodeManagerInterface* nm = control->nodes;
 
                 if(gw)
                 {
