@@ -288,7 +288,7 @@ namespace mars
                             ode_collision::Object* collision = control->collision->createObject(config, NULL);
                             if(collision && type == "mesh")
                             {
-                                control->loadCenter->loadMesh->getPhysicsFromMesh(&node);
+                                ControlCenter::loadCenter->loadMesh->getPhysicsFromMesh(&node);
                                 ((ode_collision::Mesh*)collision)->setMeshData(node.mesh);
                                 collision->createGeom();
                             }
