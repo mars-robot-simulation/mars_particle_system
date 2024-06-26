@@ -13,7 +13,7 @@
 #include <osgDB/WriteFile>
 #include <mars_utils/misc.h>
 #include <mars_utils/mathUtils.h>
-
+using namespace configmaps;
 namespace mars
 {
     namespace plugin
