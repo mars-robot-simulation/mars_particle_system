@@ -67,14 +67,7 @@ namespace mars
             }
 
             ParticleSystem::~ParticleSystem()
-            {
-                for(auto& nodeInfo : nodes)
-                {
-                    auto& mesh = nodeInfo.nodeData.mesh;
-                    constexpr bool free_memory = true;
-                    mesh.setZero(free_memory);
-                }
-            }
+            {}
 
             void ParticleSystem::init(configmaps::ConfigMap &map)
             {
