@@ -16,7 +16,6 @@ pkg_check_modules(PKGCONFIG REQUIRED
 			    lib_manager
 			    data_broker
 			    mars_interfaces
-          main_gui
           mars_utils
           osg_terrain
           osg_material_manager
