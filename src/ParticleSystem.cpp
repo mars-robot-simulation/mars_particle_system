@@ -150,32 +150,72 @@ namespace mars
 
                     if(map.hasKey("positionFile"))
                     {
+                        int d = 2;
+                        if(map.hasKey("positionFileD"))
+                        {
+                            d = map["positionFileD"];
+                        }
                         std::string filename = map["positionFile"];
                         filename = pathJoin(loadPath, filename);
                         LOG_INFO("posFile: %s", filename.c_str());
                         if(pathExists(filename))
                         {
                             Vector p(0, 0, 0);
-                            double x, y;
+                            double x, y, z, rx, ry, rz, rw, s;
                             FILE *file = fopen(filename.c_str(), "r");
-                            int read = fscanf(file, "%lf,%lf", &x, &y);
+                            int read;
+                            if(d == 2)
+                            {
+                                read = fscanf(file, "%lf,%lf", &x, &y);
+                            }
+                            else if(d == 8)
+                            {
+                                read = fscanf(file, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf", &x, &y, &z, &rx, &ry, &rz, &rw, &s);
+                            }
                             int i = 0;
-                            while(read == 2)
+                            while(read == 2 || read == 8)
                             {
                                 Content *c = new Content(&octree, new BaseContent());
                                 p.x() = x*targetSizeCamScale;
                                 p.y() = y*targetSizeCamScale;
                                 x = (((double)(int)((0.5+(p.x()/200.0))*imageMaxValue))*divImageMaxValue-0.5)*targetSize;
                                 y = (((double)(int)((0.5+(p.y()/200.0))*imageMaxValue))*divImageMaxValue-0.5)*targetSize;
-                                p.z() = getHeightFromScene(x, y);
+                                if(d == 2)
+                                {
+                                    p.z() = getHeightFromScene(x, y);
+                                }
+                                else
+                                {
+                                    p.z() = z;
+                                }
                                 c->setPosition(p);
                                 c->id = i++%256;
                                 c->index = ++index;
 
-                                c->setRotation(random(gen)*la, random(gen)*lb,
-                                               random(gen)*lg);
-                                c->setScale(1-0.5*ls);
-                                read = fscanf(file, "%lf,%lf", &x, &y);
+                                if(d == 2)
+                                {
+                                    rx = random(gen)*la;
+                                    ry = random(gen)*lb;
+                                    rz = random(gen)*lg;
+                                    s = 1-0.5*ls;
+                                }
+                                else
+                                {
+                                    sRotation r = quaternionTosRotation(Quaternion(rw, rx, ry, rz));
+                                    rx = r.alpha/360.;
+                                    ry = r.beta/360.;
+                                    rz = r.gamma/360.;
+                                }
+                                c->setRotation(rx, ry, rz);
+                                c->setScale(s);
+                                if(d == 2)
+                                {
+                                    read = fscanf(file, "%lf,%lf", &x, &y);
+                                }
+                                else
+                                {
+                                    read = fscanf(file, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf", &x, &y, &z, &rx, &ry, &rz, &rw, &s);
+                                }
                             }
                             fclose(file);
                         }
