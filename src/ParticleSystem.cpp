@@ -211,7 +211,6 @@ namespace mars
                                     rx = fabs(r.alpha/360.);
                                     ry = fabs(r.beta/360.);
                                     rz = fabs(r.gamma/360.);
-                                    fprintf(stderr, "%g %g %g\n", rx, ry, rz);
                                 }
                                 c->setRotation(rx, ry, rz);
                                 c->setScale(s);
@@ -377,7 +376,7 @@ namespace mars
                 Vector p = new_pos-pos;
                 if(p.norm() < 6.0 and not firstUpdate) return;
                 firstUpdate = false;
-                fprintf(stderr, ".");
+                //fprintf(stderr, ".");
                 pos = new_pos;
                 double pose[2] = {pose_[0], pose_[1]};
 
