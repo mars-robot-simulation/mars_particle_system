@@ -57,6 +57,7 @@ namespace mars
                 double divImageMaxValue;
                 bool firstUpdate;
                 int pIndex;
+                bool debugCollisions;
 
                 interfaces::sReal getHeightFromScene(interfaces::sReal x,
                                                      interfaces::sReal y);

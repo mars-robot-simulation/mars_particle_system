@@ -4,6 +4,7 @@
 #include <mars_interfaces/sim/NodeManagerInterface.h>
 #include <mars_interfaces/sim/SimulatorInterface.h>
 #include <mars_interfaces/sim/CollisionInterface.hpp>
+#include <mars_interfaces/graphics/GraphicsManagerInterface.h>
 #include <mars_interfaces/sim/LoadCenter.h>
 #include <mars_ode_collision/objects/Mesh.hpp>
 #include <random>
@@ -118,7 +119,11 @@ namespace mars
                     int seed = 0;
                     std::default_random_engine gen;
                     std::uniform_real_distribution<double> random;
-
+                    debugCollisions = false;
+                    if(map.hasKey("debugCollisions") && map["debugCollisions"])
+                    {
+                        debugCollisions = true;
+                    }
                     if(map.hasKey("seed"))
                     {
                         seed = map["seed"];
@@ -163,7 +168,7 @@ namespace mars
                             Vector p(0, 0, 0);
                             double x, y, z, rx, ry, rz, rw, s;
                             FILE *file = fopen(filename.c_str(), "r");
-                            int read;
+                            int read = 0;
                             if(d == 2)
                             {
                                 read = fscanf(file, "%lf,%lf", &x, &y);
@@ -202,9 +207,11 @@ namespace mars
                                 else
                                 {
                                     sRotation r = quaternionTosRotation(Quaternion(rw, rx, ry, rz));
-                                    rx = r.alpha/360.;
-                                    ry = r.beta/360.;
-                                    rz = r.gamma/360.;
+                                    // todo: add the moment the shader or collision handling fails for negativ orientations
+                                    rx = fabs(r.alpha/360.);
+                                    ry = fabs(r.beta/360.);
+                                    rz = fabs(r.gamma/360.);
+                                    fprintf(stderr, "%g %g %g\n", rx, ry, rz);
                                 }
                                 c->setRotation(rx, ry, rz);
                                 c->setScale(s);
@@ -286,7 +293,7 @@ namespace mars
                         node.origName = "empty";
                         MaterialData coll_material;
                         coll_material.exists = false;
-                        coll_material.transparency = 1;
+                        coll_material.transparency = 0.5;
                         node.material = coll_material;
 
                         if(type == "mesh" && map["physics"].hasKey("path") && map["physics"].hasKey("name"))
@@ -318,6 +325,8 @@ namespace mars
                             config["type"] = config["physicmode"];
                             //fprintf(stderr, "%s\n", config.toYamlString().c_str());
                             config["movable"] = false;
+                            // todo: add the collision data to envire graph instead of directly to the collision handler
+                            //       otherwise there is no visual representation of it
                             ode_collision::Object* collision = control->collision->createObject(config, NULL);
                             if(collision && type == "mesh")
                             {
@@ -331,6 +340,10 @@ namespace mars
                             nf.originalExt = node.ext;
                             nf.index = 0;
                             nf.collision = collision;
+                            if(debugCollisions && control->graphics)
+                            {
+                                nf.nodeData.index = control->graphics->addDrawObject(node);
+                            }
                             nodes.push_back(nf);
                         }
                     }
@@ -348,10 +361,9 @@ namespace mars
             // todo: handle the hight correctly by scene properties
             sReal ParticleSystem::getHeightFromScene(sReal x, sReal y)
             {
-                CollisionInterface* collisionSpace = control->collision.get();
                 const utils::Vector ray_origin(x, y, -100.0);
                 const utils::Vector ray_vector(0.0, 0.0, 200);
-                sReal value = -100.0 + collisionSpace->getVectorCollision(ray_origin, ray_vector);
+                sReal value = -100.0 + control->sim->getVectorCollision(ray_origin, ray_vector);
                 if (value>=99.9)
                     value = 0.0;
 
@@ -574,6 +586,12 @@ namespace mars
                                 nf.collision->setSize(nf.nodeData.ext);
                                 nf.collision->setPosition(nf.nodeData.pos);
                                 nf.collision->setRotation(nf.nodeData.rot);
+                                if(debugCollisions && control->graphics)
+                                {
+                                    control->graphics->setDrawObjectPos(nf.nodeData.index, nf.nodeData.pos);
+                                    control->graphics->setDrawObjectRot(nf.nodeData.index, nf.nodeData.rot);
+                                    control->graphics->setDrawObjectScaledSize(nf.nodeData.index, nf.nodeData.ext);
+                                }
                                 // todo: updateTransform is currently automatically called
                                 //nf.collision->updateTransform();
                                 nf.skip = true;
