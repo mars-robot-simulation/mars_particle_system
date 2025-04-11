@@ -21,7 +21,6 @@ pkg_check_modules(PKGCONFIG REQUIRED
           osg_material_manager
           configmaps
           mars_ode_collision
-          mars_graphics
 )
 include_directories(${PKGCONFIG_INCLUDE_DIRS})
 link_directories(${PKGCONFIG_LIBRARY_DIRS})
